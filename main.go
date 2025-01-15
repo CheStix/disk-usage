@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"golang.org/x/sys/windows"
 	"os"
+
+	human "github.com/dustin/go-humanize"
 )
 
 func getDiskUsage(path string) {
@@ -23,13 +25,11 @@ func getDiskUsage(path string) {
 	}
 
 	used := total - free
-	percentUsed := float64(used) / float64(total) * 100
+	percentUsed := fmt.Sprintf("%2.2f%%", float64(used)/float64(total)*100)
 
-	fmt.Printf("Disk usage of %s:\n", path)
-	fmt.Printf("Total: %d GB\n", total/1e9)
-	fmt.Printf("Used: %d GB (%.2f%%)\n", used/1e9, percentUsed)
-	fmt.Printf("Free: %d GB\n", free/1e9)
-	//fmt.Println("Free:", free, "Total:", total, "Available:", avail)
+	formatter := "%-5s %7s %7s %7s %7s\n"
+	fmt.Printf(formatter, "Disk", "Size", "Used", "Avail", "Use%")
+	fmt.Printf(formatter, path, human.Bytes(total), human.Bytes(used), human.Bytes(free), percentUsed)
 }
 
 func main() {
